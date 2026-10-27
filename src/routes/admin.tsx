@@ -40,7 +40,10 @@ function AdminPage() {
 
   const setStatus = async (id: string, status: "approved" | "rejected") => {
     const { error } = await supabase.from("resources").update({ status }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success(status === "approved" ? "Approved and published" : "Rejected");
     qc.invalidateQueries();
   };

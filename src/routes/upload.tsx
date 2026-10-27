@@ -11,7 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/upload")({
-  validateSearch: (s: Record<string, unknown>) => ({ course: typeof s.course === "string" ? s.course : undefined }),
+  validateSearch: (s: Record<string, unknown>): { course?: string } =>
+    typeof s["course"] === "string" ? { course: s["course"] } : {},
   head: () => ({
     meta: [
       { title: "Share notes — CMI Notes Archive" },
@@ -63,7 +64,10 @@ function UploadPage() {
     const form = new FormData(e.currentTarget);
     const title = String(form.get("title") ?? "").trim();
     const author = String(form.get("author") ?? "").trim();
-    if (!courseId || !title || !author) return toast.error("Course, title and your name are required.");
+    if (!courseId || !title || !author) {
+      toast.error("Course, title and your name are required.");
+      return;
+    }
     setBusy(true);
     try {
       let file_path: string | null = null;

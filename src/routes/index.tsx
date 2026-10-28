@@ -54,12 +54,9 @@ function Index() {
     const g: Record<string, typeof list> = {};
     list.forEach((c) => (g[c.subject] ??= []).push(c));
     const sorted: typeof g = {};
-    order.forEach((s) => {
-      if (g[s]) sorted[s] = g[s];
-    });
-    Object.keys(g)
-      .filter((s) => !order.includes(s))
-      .forEach((s) => (sorted[s] = g[s]));
+    for (const s of [...order, ...Object.keys(g)]) {
+      if (g[s] && !(s in sorted)) sorted[s] = g[s];
+    }
     return sorted;
   }, [courses.data, q]);
 

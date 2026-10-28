@@ -12,12 +12,14 @@ export const KIND_LABEL: Record<ResourceKind, string> = {
   tex: "LaTeX",
   typst: "Typst",
   link: "Link",
+  markdown: "Markdown",
 };
 
 export const KIND_ACCEPT: Record<Exclude<ResourceKind, "link">, string[]> = {
   pdf: [".pdf"],
   tex: [".tex", ".zip"],
   typst: [".typ", ".zip"],
+  markdown: [".md", ".markdown"],
 };
 
 export function fileMatchesKind(fileName: string, kind: Exclude<ResourceKind, "link">) {
@@ -44,3 +46,12 @@ export const courseListQuery = {
     return data;
   },
 };
+
+export async function deleteResource(r: Resource) {
+  if (r.file_path) {
+    const { error } = await supabase.storage.from("notes").remove([r.file_path]);
+    if (error) throw error;
+  }
+  const { error } = await supabase.from("resources").delete().eq("id", r.id);
+  if (error) throw error;
+}

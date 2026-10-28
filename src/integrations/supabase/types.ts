@@ -124,7 +124,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
-      resource_kind: "pdf" | "tex" | "typst" | "link"
+      resource_kind: "pdf" | "tex" | "typst" | "link" | "markdown"
       resource_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
@@ -254,7 +254,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
-      resource_kind: ["pdf", "tex", "typst", "link"],
+      resource_kind: ["pdf", "tex", "typst", "link", "markdown"],
       resource_status: ["pending", "approved", "rejected"],
     },
   },

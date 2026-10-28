@@ -24,7 +24,7 @@ export const Route = createFileRoute("/upload")({
   component: UploadPage,
 });
 
-const KINDS: ResourceKind[] = ["pdf", "tex", "typst", "link"];
+const KINDS: ResourceKind[] = ["pdf", "markdown", "tex", "typst", "link"];
 
 function UploadPage() {
   const { user, loading } = useAuth();

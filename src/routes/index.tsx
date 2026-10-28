@@ -50,9 +50,17 @@ function Index() {
     const list = (courses.data ?? []).filter(
       (c) => !term || c.name.toLowerCase().includes(term) || c.code.toLowerCase().includes(term),
     );
+    const order = ["Mathematics", "Computer Science", "Data Science", "Physics", "Humanities & Languages"];
     const g: Record<string, typeof list> = {};
     list.forEach((c) => (g[c.subject] ??= []).push(c));
-    return g;
+    const sorted: typeof g = {};
+    order.forEach((s) => {
+      if (g[s]) sorted[s] = g[s];
+    });
+    Object.keys(g)
+      .filter((s) => !order.includes(s))
+      .forEach((s) => (sorted[s] = g[s]));
+    return sorted;
   }, [courses.data, q]);
 
   return (

@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "katex/dist/katex.min.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -130,3 +131,19 @@
 @utility bg-hero {
   background-image: var(--gradient-hero);
 }
+
+.md-body { line-height: 1.7; }
+.md-body h1 { font-size: 2rem; font-weight: 700; margin: 1.5rem 0 .75rem; color: var(--primary); }
+.md-body h2 { font-size: 1.5rem; font-weight: 700; margin: 1.5rem 0 .5rem; color: var(--primary); }
+.md-body h3 { font-size: 1.2rem; font-weight: 600; margin: 1.25rem 0 .5rem; }
+.md-body p, .md-body ul, .md-body ol, .md-body pre, .md-body blockquote, .md-body table { margin: .75rem 0; }
+.md-body ul { list-style: disc; padding-left: 1.5rem; }
+.md-body ol { list-style: decimal; padding-left: 1.5rem; }
+.md-body a { color: var(--primary); text-decoration: underline; }
+.md-body code { font-family: var(--font-mono, monospace); background: var(--muted); padding: .1rem .3rem; border-radius: .25rem; font-size: .9em; }
+.md-body pre { background: var(--muted); padding: 1rem; border-radius: .375rem; overflow-x: auto; }
+.md-body pre code { background: none; padding: 0; }
+.md-body blockquote { border-left: 3px solid var(--border); padding-left: 1rem; color: var(--muted-foreground); }
+.md-body table { border-collapse: collapse; }
+.md-body th, .md-body td { border: 1px solid var(--border); padding: .35rem .6rem; }
+.md-body .katex-display { overflow-x: auto; }

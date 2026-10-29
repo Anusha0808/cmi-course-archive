@@ -9,6 +9,8 @@ import { ResourceCard } from "@/components/ResourceCard";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "CMI Notes Archive — Course notes by CMI students" },
       { name: "description", content: "Typed course notes, LaTeX and Typst sources, and peer resources shared by students of Chennai Mathematical Institute." },
       { property: "og:title", content: "CMI Notes Archive" },
@@ -48,7 +50,7 @@ function Index() {
   const grouped = useMemo(() => {
     const term = q.trim().toLowerCase();
     const list = (courses.data ?? []).filter(
-      (c) => !term || c.name.toLowerCase().includes(term) || c.code.toLowerCase().includes(term),
+      (c) => c.code !== "MISC" && (!term || c.name.toLowerCase().includes(term) || c.code.toLowerCase().includes(term)),
     );
     const order = ["Mathematics", "Computer Science", "Data Science", "Physics", "Humanities & Languages"];
     const g: Record<string, typeof list> = {};
@@ -100,6 +102,8 @@ function Index() {
           </section>
         ))}
         {courses.isLoading && <p className="text-muted-foreground">Loading courses…</p>}
+
+        <section className="mb-10"><h2 className="mb-4 border-b border-border pb-2 text-2xl font-bold text-primary">Miscellaneous</h2><Link to="/miscellaneous" className="font-semibold text-primary underline">Browse notes and peer resources by tag →</Link></section>
 
         <section className="mt-6">
           <h2 className="mb-4 border-b border-border pb-2 text-2xl font-bold text-primary">Recently added</h2>

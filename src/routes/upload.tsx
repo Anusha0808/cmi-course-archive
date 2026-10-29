@@ -8,13 +8,16 @@ import { courseListQuery, fileMatchesKind, KIND_ACCEPT, KIND_LABEL, type Resourc
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { parseTags } from "@/lib/archive-rules";
 import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/upload")({
-  validateSearch: (s: Record<string, unknown>): { course?: string } =>
-    typeof s["course"] === "string" ? { course: s["course"] } : {},
+  validateSearch: (s: Record<string, unknown>): { course?: string; section?: string } =>
+    ({ ...(typeof s["course"] === "string" ? { course: s["course"] } : {}), ...(s["section"] === "miscellaneous" ? { section: "miscellaneous" } : {}) }),
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Share notes — CMI Notes Archive" },
       { name: "description", content: "Upload your typed course notes (PDF, LaTeX, Typst) or share a link for fellow CMI students." },
       { property: "og:title", content: "Share notes — CMI Notes Archive" },
@@ -31,6 +34,7 @@ function UploadPage() {
   const search = Route.useSearch();
   const qc = useQueryClient();
   const courses = useQuery(courseListQuery);
+  const [section, setSection] = useState(search.section === "miscellaneous" ? "miscellaneous" : "course");
   const [kind, setKind] = useState<ResourceKind>("pdf");
   const [courseId, setCourseId] = useState(search.course ?? "");
   const [busy, setBusy] = useState(false);
@@ -39,10 +43,11 @@ function UploadPage() {
     queryKey: ["my-resources", user?.id],
     enabled: !!user,
     queryFn: async () => {
+      if (!user) return [];
       const { data, error } = await supabase
         .from("resources")
         .select("*, courses(code, name)")
-        .eq("uploader_id", user!.id)
+        .eq("uploader_id", user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as Resource[];
@@ -61,10 +66,13 @@ function UploadPage() {
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = new FormData(e.currentTarget);
+    if (!user) return;
+    const formElement = e.currentTarget;
+    const form = new FormData(formElement);
+    const targetCourse = section === "miscellaneous" ? courses.data?.find((c) => c.code === "MISC")?.id : courseId;
     const title = String(form.get("title") ?? "").trim();
     const author = String(form.get("author") ?? "").trim();
-    if (!courseId || !title || !author) {
+    if (!targetCourse || !title || !author) {
       toast.error("Course, title and your name are required.");
       return;
     }
@@ -80,12 +88,14 @@ function UploadPage() {
         if (!file || !file.size) throw new Error("Choose a file to upload.");
         if (!fileMatchesKind(file.name, kind)) throw new Error(`${KIND_LABEL[kind]} uploads must be ${KIND_ACCEPT[kind].join(" or ")}`);
         const safe = file.name.replace(/[^\w.-]+/g, "_");
-        file_path = `${user!.id}/${crypto.randomUUID()}-${safe}`;
+        file_path = `${user.id}/${crypto.randomUUID()}-${safe}`;
         const { error } = await supabase.storage.from("notes").upload(file_path, file);
         if (error) throw error;
       }
       const { error } = await supabase.from("resources").insert({
-        course_id: courseId,
+        course_id: targetCourse,
+        section,
+        tags: parseTags(String(form.get("tags") ?? "")),
         title,
         author_name: author,
         description: String(form.get("description") ?? "").trim() || null,
@@ -93,11 +103,11 @@ function UploadPage() {
         kind,
         file_path,
         url,
-        uploader_id: user!.id,
+        uploader_id: user.id,
       });
       if (error) throw error;
       toast.success("Submitted! It will appear once reviewed.");
-      (e.target as HTMLFormElement).reset();
+      formElement.reset();
       qc.invalidateQueries({ queryKey: ["my-resources"] });
     } catch (err) {
       toast.error((err as Error).message);
@@ -114,12 +124,16 @@ function UploadPage() {
           <p className="mt-1 text-sm text-muted-foreground">Submissions are reviewed before they go public.</p>
         </div>
         <div className="space-y-2">
+          <Label htmlFor="section">Section</Label>
+          <select id="section" value={section} onChange={(e) => setSection(e.target.value)} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="course">Course notes</option><option value="miscellaneous">Miscellaneous</option></select>
+        </div>
+        {section === "course" && <div className="space-y-2">
           <Label htmlFor="course">Course</Label>
           <select id="course" value={courseId} onChange={(e) => setCourseId(e.target.value)} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm">
             <option value="">Select a course…</option>
-            {courses.data?.map((c) => <option key={c.id} value={c.id}>{c.code} — {c.name}</option>)}
+            {courses.data?.filter((c) => c.code !== "MISC").map((c) => <option key={c.id} value={c.id}>{c.code} — {c.name}</option>)}
           </select>
-        </div>
+        </div>}
         <div className="space-y-2">
           <Label>Type</Label>
           <div className="flex flex-wrap gap-2">
@@ -135,6 +149,7 @@ function UploadPage() {
           <div className="space-y-2"><Label htmlFor="author">Your name</Label><Input id="author" name="author" maxLength={80} /></div>
           <div className="space-y-2"><Label htmlFor="year">Semester / year</Label><Input id="year" name="year" maxLength={40} placeholder="Aug–Nov 2026" /></div>
         </div>
+        <div className="space-y-2"><Label htmlFor="tags">Tags (comma separated)</Label><Input id="tags" name="tags" placeholder="algebra, study group, reading" /></div>
         <div className="space-y-2"><Label htmlFor="description">Description</Label><Textarea id="description" name="description" maxLength={1000} placeholder="Instructor, topics covered, anything useful" /></div>
         {kind === "link" ? (
           <div className="space-y-2"><Label htmlFor="url">Link</Label><Input id="url" name="url" type="url" placeholder="https://…" /></div>

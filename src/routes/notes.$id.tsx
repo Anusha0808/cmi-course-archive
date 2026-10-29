@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { ReportResource } from "@/components/ReportResource";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -45,7 +46,7 @@ function NotePage() {
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
-      {r.courses && (
+      {r.section === "miscellaneous" ? <Link to="/miscellaneous" className="text-sm text-muted-foreground">← Miscellaneous</Link> : r.courses && (
         <Link to="/courses/$code" params={{ code: r.courses.code }} className="text-sm text-muted-foreground hover:underline">
           ← {r.courses.code} · {r.courses.name}
         </Link>
@@ -55,6 +56,7 @@ function NotePage() {
         by <span className="font-medium text-foreground">{r.author_name}</span>
         {r.academic_year && <> · {r.academic_year}</>}
       </p>
+      <div className="mt-3 flex flex-wrap items-center gap-2">{r.tags.map((tag) => <Link key={tag} to="/miscellaneous" search={{ tag }} className="text-sm text-primary underline">#{tag}</Link>)}<ReportResource id={r.id} /></div>
       <article className="md-body mt-8 rounded-md border border-border bg-card p-6 shadow-card">
         <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>{text}</ReactMarkdown>
       </article>

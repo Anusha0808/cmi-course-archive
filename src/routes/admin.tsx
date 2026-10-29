@@ -10,8 +10,12 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Review submissions — CMI Notes Archive" },
       { name: "description", content: "Moderator queue for approving student-submitted notes." },
+      { property: "og:title", content: "Review submissions — CMI Notes Archive" },
+      { property: "og:description", content: "Moderator review of archive submissions and spam reports." },
       { name: "robots", content: "noindex" },
     ],
   }),

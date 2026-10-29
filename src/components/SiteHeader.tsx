@@ -14,8 +14,9 @@ export function SiteHeader() {
           <img src={logo.url} alt="Chennai Mathematical Institute" className="h-10 w-auto" />
           <span className="hidden md:block border-l border-primary/40 pl-4 font-serif text-2xl font-bold text-primary">Notes Archive</span>
         </Link>
-        <nav className="flex items-center gap-5">
+        <nav className="flex flex-wrap items-center gap-4">
           <Link to="/" className={linkCls}>Courses</Link>
+          <Link to="/miscellaneous" className={linkCls}>Miscellaneous</Link>
           <Link to="/upload" className={linkCls}>Upload</Link>
           <Link to="/about" className={linkCls}>About</Link>
           {isAdmin && <Link to="/admin" className={linkCls}>Review</Link>}

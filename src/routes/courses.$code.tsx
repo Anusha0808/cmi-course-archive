@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/courses/$code")({
   head: ({ params }) => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `${params.code} notes — CMI Notes Archive` },
       { name: "description", content: `Student notes and resources for ${params.code} at Chennai Mathematical Institute.` },
       { property: "og:title", content: `${params.code} notes — CMI Notes Archive` },

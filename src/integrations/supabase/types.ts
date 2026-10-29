@@ -38,6 +38,44 @@ export type Database = {
         }
         Relationships: []
       }
+      resource_reports: {
+        Row: {
+          created_at: string
+          details: string
+          id: string
+          reason: string
+          reporter_id: string
+          resource_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string
+          id?: string
+          reason: string
+          reporter_id: string
+          resource_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          details?: string
+          id?: string
+          reason?: string
+          reporter_id?: string
+          resource_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_reports_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resources: {
         Row: {
           academic_year: string | null
@@ -48,7 +86,9 @@ export type Database = {
           file_path: string | null
           id: string
           kind: Database["public"]["Enums"]["resource_kind"]
+          section: string
           status: Database["public"]["Enums"]["resource_status"]
+          tags: string[]
           title: string
           uploader_id: string
           url: string | null
@@ -62,7 +102,9 @@ export type Database = {
           file_path?: string | null
           id?: string
           kind: Database["public"]["Enums"]["resource_kind"]
+          section?: string
           status?: Database["public"]["Enums"]["resource_status"]
+          tags?: string[]
           title: string
           uploader_id: string
           url?: string | null
@@ -76,7 +118,9 @@ export type Database = {
           file_path?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["resource_kind"]
+          section?: string
           status?: Database["public"]["Enums"]["resource_status"]
+          tags?: string[]
           title?: string
           uploader_id?: string
           url?: string | null
@@ -114,6 +158,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      archive_email_allowed: { Args: { email: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

@@ -1,3 +1,4 @@
+import { ReportResource } from "@/components/ReportResource";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -30,7 +31,7 @@ export function ResourceCard({ r, actions }: { r: Resource; actions?: ReactNode 
         <span className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 font-mono font-medium text-secondary-foreground">
           <Icon className="size-3" /> {KIND_LABEL[r.kind]}
         </span>
-        {r.courses && <span className="font-mono text-muted-foreground">{r.courses.code}</span>}
+        {r.section !== "miscellaneous" && r.courses && <span className="font-mono text-muted-foreground">{r.courses.code}</span>}
       </div>
       {r.kind === "markdown" ? (
         <Link to="/notes/$id" params={{ id: r.id }} className={titleCls}>{r.title}</Link>
@@ -40,12 +41,14 @@ export function ResourceCard({ r, actions }: { r: Resource; actions?: ReactNode 
         </button>
       )}
       {r.description && <p className="mt-1 line-clamp-3 text-sm text-muted-foreground">{r.description}</p>}
+      {!!r.tags?.length && <div className="mt-3 flex flex-wrap gap-2">{r.tags.map((tag) => <span key={tag} className="rounded bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">#{tag}</span>)}</div>}
       <p className="mt-auto pt-4 text-xs text-muted-foreground">
         by <span className="font-medium text-foreground">{r.author_name}</span>
         {r.academic_year && <> · {r.academic_year}</>}
       </p>
-      {(actions || isAdmin) && (
+      {(
         <div className="mt-3 flex flex-wrap gap-2">
+          <ReportResource id={r.id} />
           {actions}
           {isAdmin && (
             <Button size="sm" variant="destructive" onClick={onDelete}>

@@ -3,6 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "About — CMI Notes Archive" },
       { name: "description", content: "How the CMI student notes archive works and how to contribute." },
       { property: "og:title", content: "About the CMI Notes Archive" },

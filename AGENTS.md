@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Enforce archive account eligibility and verified moderator authority with database triggers and role checks; browser checks are only user feedback.
+- Miscellaneous resources use a reserved MISC course container plus a section discriminator, preserving existing required course references; exclude that container from course browsing.
+- Store tags on resources and reports in their own RLS-protected table so moderator decisions do not alter public visibility automatically.

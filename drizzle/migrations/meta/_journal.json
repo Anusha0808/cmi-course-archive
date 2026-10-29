@@ -22,6 +22,13 @@
       "when": 1793171264765,
       "tag": "0002_add_markdown_kind",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793258610286,
+      "tag": "0003_archive_reports_tags_and_account_rules",
+      "breakpoints": true
     }
   ]
 }

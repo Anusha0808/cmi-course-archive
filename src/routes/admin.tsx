@@ -51,10 +51,10 @@ function AdminPage() {
   async function resolveReport(id: string, resourceId: string, remove: boolean) {
     if (remove) {
       const { error } = await supabase.from("resources").update({ status: "rejected" }).eq("id", resourceId);
-      if (error) return toast.error(error.message);
+      if (error) { toast.error(error.message); return; }
     }
     const { error } = await supabase.from("resource_reports").update({ status: remove ? "removed" : "dismissed" }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(remove ? "Submission removed from the archive" : "Report dismissed");
     qc.invalidateQueries();
   }

@@ -21,7 +21,7 @@ export function ReportResource({ id }: { id: string }) {
     setBusy(true);
     const { error } = await supabase.from("resource_reports").insert({ resource_id: id, reporter_id: user.id, reason, details });
     setBusy(false);
-    if (error) return toast.error(error.code === "23505" ? "You have already reported this submission." : error.message);
+    if (error) { toast.error(error.code === "23505" ? "You have already reported this submission." : error.message); return; }
     toast.success("Report sent to the moderator.");
     setOpen(false);
   }

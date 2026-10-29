@@ -38,7 +38,7 @@ function AuthPage() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const email = String(f.get("email")).trim().toLowerCase();
-    if (!emailAllowed(email)) return toast.error("Use your @cmi.ac.in email. Only the designated moderator Gmail is allowed.");
+    if (!emailAllowed(email)) { toast.error("Use your @cmi.ac.in email. Only the designated moderator Gmail is allowed."); return; }
     const password = String(f.get("password"));
     setBusy(true);
     const { error } =

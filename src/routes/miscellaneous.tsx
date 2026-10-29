@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import type { Resource } from "@/lib/resources";
 
 export const Route = createFileRoute("/miscellaneous")({
-  validateSearch: (s: Record<string, unknown>): { tag?: string } => typeof s.tag === "string" ? { tag: s.tag } : {},
+  validateSearch: (s: Record<string, unknown>): { tag?: string } => typeof s["tag"] === "string" ? { tag: s["tag"] } : {},
   head: () => ({ meta: [
     { title: "Miscellaneous notes — CMI Notes Archive" },
     { name: "description", content: "Tagged study notes, reading material and peer resources beyond CMI courses." },

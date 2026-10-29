@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as MiscellaneousRouteImport } from './routes/miscellaneous'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as CoursesCodeRouteImport } from './routes/courses.$code'
 import { Route as NotesIdRouteImport } from './routes/notes.$id'
@@ -37,6 +38,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MiscellaneousRoute = MiscellaneousRouteImport.update({
+  id: '/miscellaneous',
+  path: '/miscellaneous',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/miscellaneous': typeof MiscellaneousRoute
   '/upload': typeof UploadRoute
   '/courses/$code': typeof CoursesCodeRoute
   '/notes/$id': typeof NotesIdRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/miscellaneous': typeof MiscellaneousRoute
   '/upload': typeof UploadRoute
   '/courses/$code': typeof CoursesCodeRoute
   '/notes/$id': typeof NotesIdRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/miscellaneous': typeof MiscellaneousRoute
   '/upload': typeof UploadRoute
   '/courses/$code': typeof CoursesCodeRoute
   '/notes/$id': typeof NotesIdRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/auth'
+    | '/miscellaneous'
     | '/upload'
     | '/courses/$code'
     | '/notes/$id'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/auth'
+    | '/miscellaneous'
     | '/upload'
     | '/courses/$code'
     | '/notes/$id'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/auth'
+    | '/miscellaneous'
     | '/upload'
     | '/courses/$code'
     | '/notes/$id'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
+  MiscellaneousRoute: typeof MiscellaneousRoute
   UploadRoute: typeof UploadRoute
   CoursesCodeRoute: typeof CoursesCodeRoute
   NotesIdRoute: typeof NotesIdRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/miscellaneous': {
+      id: '/miscellaneous'
+      path: '/miscellaneous'
+      fullPath: '/miscellaneous'
+      preLoaderRoute: typeof MiscellaneousRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/upload': {
       id: '/upload'
       path: '/upload'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
+  MiscellaneousRoute: MiscellaneousRoute,
   UploadRoute: UploadRoute,
   CoursesCodeRoute: CoursesCodeRoute,
   NotesIdRoute: NotesIdRoute,

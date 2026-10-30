@@ -29,19 +29,19 @@ export function CourseBrowser({ courses, counts, loading, error, retry }: { cour
       <h2 className="text-2xl font-bold text-primary">{notesOnly ? "Courses with notes" : "Full course catalogue"}</h2>
       <a href="https://www.cmi.ac.in/teaching/courses.php#bsc" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground underline underline-offset-4">CMI course catalogue ↗</a>
     </div>
-    <Tabs value={notesOnly ? "notes" : "catalogue"} onValueChange={value => { setNotesOnly(value === "notes"); setPage(1); }} className="mb-5">
+    <Tabs value={notesOnly ? "notes" : "catalogue"} onValueChange={value => { setNotesOnly(value === "notes"); setSubject("all"); setPage(1); }} className="mb-5">
       <TabsList aria-label="Course view" className="h-auto flex-wrap">
         <TabsTrigger value="notes" className="min-h-9">With notes</TabsTrigger>
         <TabsTrigger value="catalogue" className="min-h-9">Full catalogue</TabsTrigger>
       </TabsList>
     </Tabs>
-    <Tabs value={subject} onValueChange={value => { setSubject(value); setPage(1); }}>
+    {!notesOnly && <Tabs value={subject} onValueChange={value => { setSubject(value); setPage(1); }}>
       <TabsList aria-label="Course subjects" className="mb-5 flex h-auto flex-wrap justify-start gap-1 bg-transparent p-0">
         {["all", ...COURSE_SUBJECTS].map(value => <TabsTrigger key={value} value={value} className="min-h-10 whitespace-normal border border-border px-3 data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none">
           {value === "all" ? "All subjects" : value}<span className="ml-2 font-mono text-xs opacity-70">{filterCourses(courses, value, "", notesOnly, counts).length}</span>
         </TabsTrigger>)}
       </TabsList>
-    </Tabs>
+    </Tabs>}
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
       <div className="relative w-full sm:max-w-md">
         <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" />

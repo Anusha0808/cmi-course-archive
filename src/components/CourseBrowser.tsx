@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Search, ChevronRight } from "lucide-react";
 import type { Course } from "@/lib/resources";
@@ -14,6 +14,15 @@ export function CourseBrowser({ courses, counts, loading, error, retry }: { cour
   const [requestedPage, setPage] = useState(1);
   const visible = filterCourses(courses, subject, search, notesOnly, counts);
   const { page, pages, items } = coursePage(visible, requestedPage);
+  const grouped = useMemo(() => {
+    const bySubject = new Map<string, typeof visible>();
+    for (const course of visible) {
+      const list = bySubject.get(course.subject) ?? [];
+      list.push(course);
+      bySubject.set(course.subject, list);
+    }
+    return [...bySubject.entries()].sort(([a], [b]) => COURSE_SUBJECTS.indexOf(a as (typeof COURSE_SUBJECTS)[number]) - COURSE_SUBJECTS.indexOf(b as (typeof COURSE_SUBJECTS)[number]));
+  }, [visible]);
 
   return <section aria-label="Course catalogue" className="mb-10">
     <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2 border-b border-border pb-3">
@@ -39,7 +48,21 @@ export function CourseBrowser({ courses, counts, loading, error, retry }: { cour
         <Input aria-label="Search courses" placeholder="Search by course name or short form" value={search} onChange={event => { setSearch(event.target.value); setPage(1); }} className="h-10 bg-card pl-9" />
       </div>
     </div>
-    {loading ? <p className="py-8 text-muted-foreground">Loading courses…</p> : error ? <div className="py-8"><p className="mb-3 text-muted-foreground">Could not load courses.</p><Button variant="outline" onClick={retry}>Try again</Button></div> : <>
+    {loading ? <p className="py-8 text-muted-foreground">Loading courses…</p> : error ? <div className="py-8"><p className="mb-3 text-muted-foreground">Could not load courses.</p><Button variant="outline" onClick={retry}>Try again</Button></div> : notesOnly ? <>
+      {grouped.map(([groupSubject, list]) => <section key={groupSubject} className="mb-8">
+        <h3 className="mb-4 border-b border-border pb-2 text-xl font-bold text-primary">{groupSubject}</h3>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {list.map(course => <Link key={course.id} to="/courses/$code" params={{ code: course.code }} className="group flex items-baseline justify-between rounded-md border border-border bg-card px-4 py-3 shadow-card transition-colors hover:border-ring">
+            <span className="min-w-0">
+              <span className="mr-2 font-mono text-xs text-muted-foreground">{course.code}</span>
+              <span className="font-semibold text-primary underline-offset-4 group-hover:underline">{course.name}</span>
+            </span>
+            <span className="ml-3 shrink-0 text-xs text-muted-foreground">{counts[course.id] ?? 0} {((counts[course.id] ?? 0) === 1) ? "note" : "notes"}</span>
+          </Link>)}
+        </div>
+      </section>)}
+      {!visible.length && <div className="py-8"><p className="text-muted-foreground">No courses with approved notes match these filters.</p><Button variant="outline" className="mt-3" onClick={() => { setNotesOnly(false); setPage(1); }}>Browse full catalogue</Button></div>}
+    </> : <>
       <div className="mb-2 flex justify-between gap-4 text-sm text-muted-foreground"><span>{visible.length} {visible.length === 1 ? "course" : "courses"}</span><span>Approved notes</span></div>
       <div className="border-t border-border">
         {items.map(course => <Link key={course.id} to="/courses/$code" params={{ code: course.code }} className="group grid grid-cols-[minmax(0,1fr)_3rem_1rem] items-center gap-3 border-b border-border py-3 transition-colors hover:bg-muted/50 sm:grid-cols-[7rem_minmax(0,1fr)_3rem_1rem]">
@@ -49,7 +72,7 @@ export function CourseBrowser({ courses, counts, loading, error, retry }: { cour
           <ChevronRight aria-hidden="true" className="col-start-3 row-span-2 row-start-1 h-4 w-4 text-muted-foreground sm:col-start-4 sm:row-span-1" />
         </Link>)}
       </div>
-      {!items.length && <div className="py-8"><p className="text-muted-foreground">{notesOnly ? "No courses with approved notes match these filters." : "No courses match these filters."}</p>{notesOnly && <Button variant="outline" className="mt-3" onClick={() => { setNotesOnly(false); setPage(1); }}>Browse full catalogue</Button>}</div>}
+      {!items.length && <div className="py-8"><p className="text-muted-foreground">No courses match these filters.</p></div>}
       {pages > 1 && <div className="mt-4 flex items-center justify-between"><Button variant="outline" size="icon" aria-label="Previous course page" disabled={page === 1} onClick={() => setPage(page - 1)}><ArrowLeft /></Button><span className="text-sm text-muted-foreground">Page {page} of {pages}</span><Button variant="outline" size="icon" aria-label="Next course page" disabled={page === pages} onClick={() => setPage(page + 1)}><ArrowRight /></Button></div>}
     </>}
   </section>;

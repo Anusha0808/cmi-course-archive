@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Search, ChevronRight } from "lucide-react";
 import type { Course } from "@/lib/resources";
@@ -14,6 +14,15 @@ export function CourseBrowser({ courses, counts, loading, error, retry }: { cour
   const [requestedPage, setPage] = useState(1);
   const visible = filterCourses(courses, subject, search, notesOnly, counts);
   const { page, pages, items } = coursePage(visible, requestedPage);
+  const grouped = useMemo(() => {
+    const bySubject = new Map<string, typeof visible>();
+    for (const course of visible) {
+      const list = bySubject.get(course.subject) ?? [];
+      list.push(course);
+      bySubject.set(course.subject, list);
+    }
+    return [...bySubject.entries()].sort(([a], [b]) => COURSE_SUBJECTS.indexOf(a as (typeof COURSE_SUBJECTS)[number]) - COURSE_SUBJECTS.indexOf(b as (typeof COURSE_SUBJECTS)[number]));
+  }, [visible]);
 
   return <section aria-label="Course catalogue" className="mb-10">
     <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2 border-b border-border pb-3">

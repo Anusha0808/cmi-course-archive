@@ -1,5 +1,6 @@
 export const COURSE_SUBJECTS = ["Mathematics", "Computer Science", "Data Science", "Physics", "Humanities & Languages"] as const;
 export const COURSES_PER_PAGE = 12;
+export const DEFAULT_NOTES_ONLY = true;
 
 type BrowsableCourse = { id: string; code: string; name: string; subject: string };
 

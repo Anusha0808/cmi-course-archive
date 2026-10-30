@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { coursePage, filterCourses } from "@/lib/course-browser";
+import { DEFAULT_NOTES_ONLY, coursePage, filterCourses } from "@/lib/course-browser";
 
 const courses = [
   { id: "math", code: "ALG1", name: "Algebra I", subject: "Mathematics" },
@@ -9,6 +9,11 @@ const courses = [
 ];
 
 describe("Course browsing", () => {
+  it("defaults to courses with notes and keeps the full catalogue available", () => {
+    expect(DEFAULT_NOTES_ONLY).toBe(true);
+    expect(filterCourses(courses, "all", "", DEFAULT_NOTES_ONLY, { math: 2 }).map(c => c.id)).toEqual(["math"]);
+    expect(filterCourses(courses, "all", "", false, { math: 2 }).map(c => c.id)).toEqual(["math", "cs", "ds"]);
+  });
   it("keeps Computer Science separate from Data Science", () => {
     expect(filterCourses(courses, "Computer Science", "", false, {}).map(c => c.code)).toEqual(["ALGO"]);
     expect(filterCourses(courses, "Data Science", "", false, {}).map(c => c.code)).toEqual(["FML"]);

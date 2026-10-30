@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
+import { CourseBrowser } from "@/components/CourseBrowser";
 import { supabase } from "@/integrations/supabase/client";
 import { courseListQuery, type Resource } from "@/lib/resources";
 import { ResourceCard } from "@/components/ResourceCard";
@@ -21,7 +20,6 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [q, setQ] = useState("");
   const courses = useQuery(courseListQuery);
   const counts = useQuery({
     queryKey: ["resource-counts"],
@@ -47,21 +45,6 @@ function Index() {
     },
   });
 
-  const grouped = useMemo(() => {
-    const term = q.trim().toLowerCase();
-    const list = (courses.data ?? []).filter(
-      (c) => c.code !== "MISC" && (!term || c.name.toLowerCase().includes(term) || c.code.toLowerCase().includes(term)),
-    );
-    const order = ["Mathematics", "Computer Science", "Data Science", "Physics", "Humanities & Languages"];
-    const g: Record<string, typeof list> = {};
-    list.forEach((c) => (g[c.subject] ??= []).push(c));
-    const sorted: typeof g = {};
-    for (const s of [...order, ...Object.keys(g)]) {
-      if (g[s] && !(s in sorted)) sorted[s] = g[s];
-    }
-    return sorted;
-  }, [courses.data, q]);
-
   return (
     <div>
       <section className="bg-hero">
@@ -73,35 +56,11 @@ function Index() {
           <p className="mt-4 max-w-xl text-muted-foreground">
             Typed notes, LaTeX and Typst sources, problem sets and useful links — shared by your peers, organised by course.
           </p>
-          <div className="mt-8 max-w-md">
-            <Input placeholder="Search courses — e.g. Topology, CS201" value={q} onChange={(e) => setQ(e.target.value)} className="h-11 bg-card" />
-          </div>
         </div>
       </section>
 
       <div className="mx-auto max-w-6xl px-5 py-10">
-        {Object.entries(grouped).map(([subject, list]) => (
-          <section key={subject} className="mb-10">
-            <h2 className="mb-4 border-b border-border pb-2 text-2xl font-bold text-primary">{subject}</h2>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {list.map((c) => (
-                <Link
-                  key={c.id}
-                  to="/courses/$code"
-                  params={{ code: c.code }}
-                  className="group flex items-baseline justify-between rounded-md border border-border bg-card px-4 py-3 shadow-card transition-colors hover:border-ring"
-                >
-                  <span>
-                    <span className="mr-2 font-mono text-xs text-muted-foreground">{c.code}</span>
-                    <span className="font-semibold text-primary group-hover:underline underline-offset-4">{c.name}</span>
-                  </span>
-                  <span className="text-xs text-muted-foreground">{counts.data?.[c.id] ?? 0}</span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        ))}
-        {courses.isLoading && <p className="text-muted-foreground">Loading courses…</p>}
+        <CourseBrowser courses={courses.data ?? []} counts={counts.data ?? {}} loading={courses.isLoading || counts.isLoading} error={courses.isError || counts.isError} retry={() => { void courses.refetch(); void counts.refetch(); }} />
 
         <section className="mb-10"><h2 className="mb-4 border-b border-border pb-2 text-2xl font-bold text-primary">Miscellaneous</h2><Link to="/miscellaneous" className="font-semibold text-primary underline">Browse notes and peer resources by tag →</Link></section>
 

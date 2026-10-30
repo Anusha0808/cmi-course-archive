@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { parseTags } from "@/lib/archive-rules";
 import { Textarea } from "@/components/ui/textarea";
+import { COURSE_SUBJECTS } from "@/lib/course-browser";
 
 export const Route = createFileRoute("/upload")({
   validateSearch: (s: Record<string, unknown>): { course?: string; section?: string } =>
@@ -131,7 +132,7 @@ function UploadPage() {
           <Label htmlFor="course">Course</Label>
           <select id="course" value={courseId} onChange={(e) => setCourseId(e.target.value)} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm">
             <option value="">Select a course…</option>
-            {courses.data?.filter((c) => c.code !== "MISC").map((c) => <option key={c.id} value={c.id}>{c.code} — {c.name}</option>)}
+            {COURSE_SUBJECTS.map(subject => <optgroup key={subject} label={subject}>{courses.data?.filter(c => c.code !== "MISC" && c.subject === subject).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true })).map(c => <option key={c.id} value={c.id}>{c.code} — {c.name}</option>)}</optgroup>)}
           </select>
         </div>}
         <div className="space-y-2">

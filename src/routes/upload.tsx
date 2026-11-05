@@ -39,6 +39,7 @@ function UploadPage() {
   const [kind, setKind] = useState<ResourceKind>("pdf");
   const [courseId, setCourseId] = useState(search.course ?? "");
   const [busy, setBusy] = useState(false);
+  const [requesting, setRequesting] = useState(false);
 
   const mine = useQuery({
     queryKey: ["my-resources", user?.id],
@@ -70,7 +71,16 @@ function UploadPage() {
     if (!user) return;
     const formElement = e.currentTarget;
     const form = new FormData(formElement);
-    const targetCourse = section === "miscellaneous" ? courses.data?.find((c) => c.code === "MISC")?.id : courseId;
+    const misc = courses.data?.find((c) => c.code === "MISC")?.id;
+    const reqCode = String(form.get("req_code") ?? "").trim().toUpperCase();
+    const reqName = String(form.get("req_name") ?? "").trim();
+    const reqSubject = String(form.get("req_subject") ?? "");
+    const isRequest = section === "course" && requesting;
+    if (isRequest && (!reqCode || !reqName || !reqSubject)) {
+      toast.error("Enter the course short form, full name and subject.");
+      return;
+    }
+    const targetCourse = section === "miscellaneous" || isRequest ? misc : courseId;
     const title = String(form.get("title") ?? "").trim();
     const author = String(form.get("author") ?? "").trim();
     if (!targetCourse || !title || !author) {
@@ -93,7 +103,15 @@ function UploadPage() {
         const { error } = await supabase.storage.from("notes").upload(file_path, file);
         if (error) throw error;
       }
+      let course_request_id: string | null = null;
+      if (isRequest) {
+        const { data: req, error: reqErr } = await supabase.from("course_requests")
+          .insert({ code: reqCode, name: reqName, subject: reqSubject, requested_by: user.id }).select("id").single();
+        if (reqErr) throw reqErr;
+        course_request_id = req.id;
+      }
       const { error } = await supabase.from("resources").insert({
+        course_request_id,
         course_id: targetCourse,
         section,
         tags: parseTags(String(form.get("tags") ?? "")),
@@ -107,7 +125,8 @@ function UploadPage() {
         uploader_id: user.id,
       });
       if (error) throw error;
-      toast.success("Submitted! It will appear once reviewed.");
+      toast.success(isRequest ? "Submitted! The course and your notes will appear once a moderator approves them." : "Submitted! It will appear once reviewed.");
+      setRequesting(false);
       formElement.reset();
       qc.invalidateQueries({ queryKey: ["my-resources"] });
     } catch (err) {
@@ -130,10 +149,20 @@ function UploadPage() {
         </div>
         {section === "course" && <div className="space-y-2">
           <Label htmlFor="course">Course</Label>
-          <select id="course" value={courseId} onChange={(e) => setCourseId(e.target.value)} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm">
+          {!requesting && <select id="course" value={courseId} onChange={(e) => setCourseId(e.target.value)} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm">
             <option value="">Select a course…</option>
             {COURSE_SUBJECTS.map(subject => <optgroup key={subject} label={subject}>{courses.data?.filter(c => c.code !== "MISC" && c.subject === subject).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true })).map(c => <option key={c.id} value={c.id}>{c.code} — {c.name}</option>)}</optgroup>)}
-          </select>
+          </select>}
+          <button type="button" onClick={() => setRequesting(!requesting)} className="text-sm text-primary underline underline-offset-2">
+            {requesting ? "Pick from the course list instead" : "Course not listed? Request it"}
+          </button>
+          {requesting && <div className="grid gap-3 rounded-md border border-border bg-muted/40 p-3 sm:grid-cols-[8rem_1fr]">
+            <div className="space-y-1"><Label htmlFor="req_code">Short form</Label><Input id="req_code" name="req_code" maxLength={20} placeholder="AGTH" /></div>
+            <div className="space-y-1"><Label htmlFor="req_name">Full course name</Label><Input id="req_name" name="req_name" maxLength={150} placeholder="Algorithmic Game Theory" /></div>
+            <div className="space-y-1 sm:col-span-2"><Label htmlFor="req_subject">Subject</Label>
+              <select id="req_subject" name="req_subject" defaultValue="" className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="">Select a subject…</option>{COURSE_SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}</select></div>
+            <p className="text-xs text-muted-foreground sm:col-span-2">A moderator will add the course, then your notes will be filed under it.</p>
+          </div>}
         </div>}
         <div className="space-y-2">
           <Label>Type</Label>

@@ -59,6 +59,24 @@ function AdminPage() {
     qc.invalidateQueries();
   }
 
+  const requests = useQuery({
+    queryKey: ["course-requests"], enabled: isAdmin,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("course_requests").select("*").eq("status", "pending").order("created_at");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  async function decideRequest(id: string, approve: boolean) {
+    const { error } = approve
+      ? await supabase.rpc("approve_course_request", { _id: id })
+      : await supabase.from("course_requests").update({ status: "rejected" }).eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(approve ? "Course added — linked notes moved into it" : "Request rejected");
+    qc.invalidateQueries();
+  }
+
   if (loading) return null;
   if (!isAdmin) return <p className="mx-auto max-w-6xl px-5 py-16 text-muted-foreground">Only moderators can view this page.</p>;
 
@@ -85,6 +103,13 @@ function AdminPage() {
             <Button size="sm" variant="destructive" onClick={() => resolveReport(report.id, report.resource_id, true)}>Remove from archive</Button>
           </>} />}
         </div>)}</div> : <p className="text-muted-foreground">No open reports.</p>}
+      </section>
+      <section className="mb-10">
+        <h2 className="mb-4 border-b border-border pb-2 text-2xl font-bold text-primary">Course requests</h2>
+        {requests.data?.length ? <ul className="space-y-2">{requests.data.map((q) => <li key={q.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-card p-3">
+          <div><span className="font-mono font-semibold text-primary">{q.code}</span> — {q.name} <span className="text-sm text-muted-foreground">({q.subject})</span></div>
+          <div className="flex gap-2"><Button size="sm" onClick={() => decideRequest(q.id, true)}>Add course</Button><Button size="sm" variant="outline" onClick={() => decideRequest(q.id, false)}>Reject</Button></div>
+        </li>)}</ul> : <p className="text-muted-foreground">No course requests.</p>}
       </section>
       <h2 className="mb-4 text-2xl font-bold text-primary">Pending submissions</h2>
       {pending.data?.length ? (

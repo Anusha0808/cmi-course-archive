@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { emailAllowed, verifiedModerator, parseTags } from "@/lib/archive-rules";
+import { emailAllowed, verifiedModerator, parseTags, resetRedirectUrl, isRecoveryHash } from "@/lib/archive-rules";
 
 describe("Archive account rules", () => {
   it("accepts the exact CMI domain", () => {

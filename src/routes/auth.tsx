@@ -193,14 +193,4 @@ function AuthPage() {
       </div>
     </div>
   );
-
-  async function sendResetFromSent() {
-    setBusy(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(resetSentTo, {
-      redirectTo: resetRedirectUrl(window.location.origin),
-    });
-    setBusy(false);
-    if (error) toast.error(error.message);
-    else toast.success("Reset link resent.");
-  }
 }

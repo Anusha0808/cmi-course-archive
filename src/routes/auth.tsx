@@ -104,6 +104,16 @@ function AuthPage() {
     toast.success("Check your email for a reset link.");
   }
 
+  async function resendReset() {
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(resetSentTo, {
+      redirectTo: resetRedirectUrl(window.location.origin),
+    });
+    setBusy(false);
+    if (error) toast.error(error.message);
+    else toast.success("Reset link resent.");
+  }
+
   const heading = verificationEmail
     ? "Verify your email"
     : view === "forgot"

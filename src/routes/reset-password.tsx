@@ -26,7 +26,7 @@ export const Route = createFileRoute("/reset-password")({
 
 type Status = "checking" | "ready" | "invalid" | "done";
 
-function ResetPasswordPage() {
+export function ResetPasswordPage() {
   const [status, setStatus] = useState<Status>("checking");
   const [busy, setBusy] = useState(false);
 

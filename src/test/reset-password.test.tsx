@@ -1,15 +1,20 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createMemoryHistory, createRouter, RouterProvider } from "@tanstack/react-router";
+import {
+  createMemoryHistory,
+  createRootRoute,
+  createRoute,
+  createRouter,
+  Outlet,
+  RouterProvider,
+} from "@tanstack/react-router";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { routeTree } from "@/routeTree.gen";
+import { ResetPasswordPage } from "@/routes/reset-password";
 
 const { auth, listeners } = vi.hoisted(() => {
   const listeners = new Set<(event: string, session: unknown) => void>();
   const auth = {
     getSession: vi.fn(async () => ({ data: { session: null } })),
-    getUser: vi.fn(async () => ({ data: { user: null } })),
     onAuthStateChange: vi.fn((cb: (event: string, session: unknown) => void) => {
       listeners.add(cb);
       return { data: { subscription: { unsubscribe: () => listeners.delete(cb) } } };
@@ -20,24 +25,28 @@ const { auth, listeners } = vi.hoisted(() => {
 });
 
 vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { auth, rpc: vi.fn(async () => ({ data: false })) },
+  supabase: { auth },
 }));
 
 const recoverySession = {
   user: { id: "u1", email: "student@cmi.ac.in", app_metadata: { provider: "recovery" } },
 };
 
-function renderResetPage() {
-  const router = createRouter({
-    routeTree,
-    history: createMemoryHistory({ initialEntries: ["/reset-password"] }),
-    context: { queryClient: new QueryClient() },
-  });
-  return render(<RouterProvider router={router} />);
-}
+const blank = () => null;
+const root = createRootRoute({ component: () => <Outlet /> });
+const tree = root.addChildren([
+  createRoute({ getParentRoute: () => root, path: "/reset-password", component: ResetPasswordPage }),
+  createRoute({ getParentRoute: () => root, path: "/auth", component: blank }),
+  createRoute({ getParentRoute: () => root, path: "/upload", component: blank }),
+  createRoute({ getParentRoute: () => root, path: "/", component: blank }),
+]);
 
 async function openPage() {
-  renderResetPage();
+  const router = createRouter({
+    routeTree: tree,
+    history: createMemoryHistory({ initialEntries: ["/reset-password"] }),
+  });
+  render(<RouterProvider router={router} />);
   await waitFor(() => expect(listeners.size).toBeGreaterThan(0));
 }
 

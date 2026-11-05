@@ -35,7 +35,7 @@ function ResetPasswordPage() {
     const admit = (allowed: boolean) =>
       setStatus((prev) => (prev === "ready" || prev === "done" ? prev : allowed ? "ready" : "invalid"));
 
-    const sub = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY" && session && active) admit(true);
     });
 

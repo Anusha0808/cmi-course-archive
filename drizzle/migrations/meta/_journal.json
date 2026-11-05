@@ -29,6 +29,13 @@
       "when": 1793258610286,
       "tag": "0003_archive_reports_tags_and_account_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793896913074,
+      "tag": "0004_course_requests",
+      "breakpoints": true
     }
   ]
 }

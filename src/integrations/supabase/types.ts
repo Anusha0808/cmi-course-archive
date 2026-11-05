@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      course_requests: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+          requested_by: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          requested_by: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          requested_by?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           code: string
@@ -81,6 +111,7 @@ export type Database = {
           academic_year: string | null
           author_name: string
           course_id: string
+          course_request_id: string | null
           created_at: string
           description: string | null
           file_path: string | null
@@ -97,6 +128,7 @@ export type Database = {
           academic_year?: string | null
           author_name: string
           course_id: string
+          course_request_id?: string | null
           created_at?: string
           description?: string | null
           file_path?: string | null
@@ -113,6 +145,7 @@ export type Database = {
           academic_year?: string | null
           author_name?: string
           course_id?: string
+          course_request_id?: string | null
           created_at?: string
           description?: string | null
           file_path?: string | null
@@ -131,6 +164,13 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_course_request_id_fkey"
+            columns: ["course_request_id"]
+            isOneToOne: false
+            referencedRelation: "course_requests"
             referencedColumns: ["id"]
           },
         ]
@@ -158,6 +198,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_course_request: { Args: { _id: string }; Returns: string }
       archive_email_allowed: { Args: { email: string }; Returns: boolean }
       has_role: {
         Args: {

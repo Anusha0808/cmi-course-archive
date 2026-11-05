@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { emailAllowed } from "@/lib/archive-rules";
+import { emailAllowed, resetRedirectUrl } from "@/lib/archive-rules";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,11 +23,14 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+type View = "in" | "up" | "forgot";
+
 function AuthPage() {
-  const [mode, setMode] = useState<"in" | "up">("in");
+  const [view, setView] = useState<View>("in");
   const [busy, setBusy] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState("");
   const [code, setCode] = useState("");
+  const [resetSentTo, setResetSentTo] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -43,7 +46,7 @@ function AuthPage() {
     const password = String(f.get("password"));
     setBusy(true);
     const { error } =
-      mode === "in"
+      view === "in"
         ? await supabase.auth.signInWithPassword({ email, password })
         : await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
     setBusy(false);
@@ -51,7 +54,7 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    if (mode === "up") {
+    if (view === "up") {
       setVerificationEmail(email);
       toast.success("Check your email for your verification code.");
     }
@@ -87,11 +90,46 @@ function AuthPage() {
     else toast.success("Verification email resent.");
   }
 
+  async function sendReset(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const email = String(new FormData(e.currentTarget).get("email")).trim().toLowerCase();
+    if (!emailAllowed(email)) { toast.error("Use your @cmi.ac.in email. Only the designated moderator Gmail is allowed."); return; }
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: resetRedirectUrl(window.location.origin),
+    });
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    setResetSentTo(email);
+    toast.success("Check your email for a reset link.");
+  }
+
+  async function resendReset() {
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(resetSentTo, {
+      redirectTo: resetRedirectUrl(window.location.origin),
+    });
+    setBusy(false);
+    if (error) toast.error(error.message);
+    else toast.success("Reset link resent.");
+  }
+
+  const heading = verificationEmail
+    ? "Verify your email"
+    : view === "forgot"
+      ? resetSentTo
+        ? "Check your email"
+        : "Reset password"
+      : view === "in"
+        ? "Sign in"
+        : "Create account";
+
   return (
     <div className="bg-hero">
       <div className="mx-auto max-w-sm px-5 py-16">
         <div className="rounded-md border border-border bg-card p-6 shadow-card space-y-5">
-          <h1 className="text-3xl font-bold text-primary">{verificationEmail ? "Verify your email" : mode === "in" ? "Sign in" : "Create account"}</h1>
+          <h1 className="text-3xl font-bold text-primary">{heading}</h1>
+
           {verificationEmail ? <form onSubmit={verify} className="space-y-4">
             <p className="break-all text-sm text-muted-foreground">{verificationEmail}</p>
             <Label htmlFor="verification-code">Verification code</Label>
@@ -99,15 +137,42 @@ function AuthPage() {
             <Button className="w-full" disabled={busy} type="submit">Verify account</Button>
             <Button variant="ghost" disabled={busy} type="button" onClick={resend}>Resend code</Button>
             <Button variant="ghost" type="button" onClick={() => setVerificationEmail("")}>Change email</Button>
-          </form> : <>
+          </form> : view === "forgot" ? <>
+            {resetSentTo ? <>
+              <p className="break-all text-sm text-muted-foreground">{resetSentTo}</p>
+              <p className="text-sm text-muted-foreground">
+                We sent a link to this address. Open it to choose a new password — it expires in an hour.
+              </p>
+              <Button variant="ghost" className="w-full" disabled={busy} type="button" onClick={resendReset}>
+                Resend link
+              </Button>
+              <Button className="w-full" type="button" onClick={() => { setResetSentTo(""); setView("in"); }}>
+                Back to sign in
+              </Button>
+            </> : <form onSubmit={sendReset} className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Enter the email on your archive account and we'll send a link to choose a new password.
+              </p>
+              <div className="space-y-2"><Label htmlFor="reset-email">Email</Label><Input id="reset-email" name="email" type="email" required /></div>
+              <Button type="submit" className="w-full" disabled={busy}>Send reset link</Button>
+              <Button variant="ghost" className="w-full text-sm" type="button" onClick={() => setView("in")}>
+                Back to sign in
+              </Button>
+            </form>}
+          </> : <>
           <p className="text-sm text-muted-foreground">CMI email accounts · designated moderator Gmail</p>
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" required /></div>
             <div className="space-y-2"><Label htmlFor="password">Password</Label><Input id="password" name="password" type="password" minLength={6} required /></div>
-            <Button type="submit" className="w-full" disabled={busy}>{mode === "in" ? "Sign in" : "Sign up"}</Button>
+            <Button type="submit" className="w-full" disabled={busy}>{view === "in" ? "Sign in" : "Sign up"}</Button>
           </form>
-          <Button variant="ghost" className="w-full text-sm" onClick={() => setMode(mode === "in" ? "up" : "in")}>
-            {mode === "in" ? "New here? Create an account" : "Have an account? Sign in"}
+          {view === "in" && (
+            <Button variant="ghost" className="w-full text-sm" onClick={() => { setResetSentTo(""); setView("forgot"); }}>
+              Forgot password?
+            </Button>
+          )}
+          <Button variant="ghost" className="w-full text-sm" onClick={() => setView(view === "in" ? "up" : "in")}>
+            {view === "in" ? "New here? Create an account" : "Have an account? Sign in"}
           </Button>
           <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-border" />

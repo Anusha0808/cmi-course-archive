@@ -12,3 +12,13 @@ export function verifiedModerator(email: string, confirmed: boolean) {
 export function parseTags(value: string) {
   return [...new Set(value.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean))];
 }
+
+/** Password-reset emails must land on the app's own reset page. */
+export function resetRedirectUrl(origin: string) {
+  return `${origin.replace(/\/+$/, "")}/reset-password`;
+}
+
+/** True only for recovery links (type=recovery), never for signup or magic-link hashes. */
+export function isRecoveryHash(hash: string) {
+  return /(?:^|[&#?])type=recovery(?:&|$)/.test(hash);
+}

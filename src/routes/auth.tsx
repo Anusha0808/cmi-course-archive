@@ -143,7 +143,7 @@ function AuthPage() {
               <p className="text-sm text-muted-foreground">
                 We sent a link to this address. Open it to choose a new password — it expires in an hour.
               </p>
-              <Button variant="ghost" className="w-full" disabled={busy} type="button" onClick={sendResetFromSent}>
+              <Button variant="ghost" className="w-full" disabled={busy} type="button" onClick={resendReset}>
                 Resend link
               </Button>
               <Button className="w-full" type="button" onClick={() => { setResetSentTo(""); setView("in"); }}>

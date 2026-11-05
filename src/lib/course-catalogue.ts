@@ -45,6 +45,7 @@ export const ADDITIONAL_COURSES = [
   ["QAT", "Quantitative Automata Theory", "Computer Science"],
   ["RAND", "Randomized Algorithms", "Computer Science"],
   ["THPR", "Theorem Proving", "Computer Science"],
+  ["AGTH", "Algorithmic Game Theory", "Computer Science"],
   ["CSPROJ", "Project / Dissertation (Computer Science)", "Computer Science"],
   ["LAA", "Linear Algebra and its Applications", "Data Science"],
   ["DMML", "Data Mining and Machine Learning", "Data Science"],

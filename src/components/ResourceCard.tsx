@@ -43,7 +43,7 @@ export function ResourceCard({ r, actions }: { r: Resource; actions?: ReactNode 
       {r.description && <p className="mt-1 line-clamp-3 text-sm text-muted-foreground">{r.description}</p>}
       {!!r.tags?.length && <div className="mt-3 flex flex-wrap gap-2">{r.tags.map((tag) => <span key={tag} className="rounded bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">#{tag}</span>)}</div>}
       <p className="mt-auto pt-4 text-xs text-muted-foreground">
-        by <span className="font-medium text-foreground">{r.author_name}</span>
+        by <Link to="/authors/$id" params={{ id: r.uploader_id }} className="font-medium text-primary hover:underline">{r.author_name}</Link>
         {r.academic_year && <> · {r.academic_year}</>}
       </p>
       {(

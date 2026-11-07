@@ -1,4 +1,7 @@
 # Archive updates
+- [ ] Add public author profiles with editable names and short bios.
+- [ ] Add owner editing with moderator review and in-app update notifications, preserving approved versions.
+- [ ] Test profile and update permissions and verify the complete review flow.
 - [x] Add missing official CMI courses and correct subject classifications without losing notes.
 - [x] Make course browsing compact with subject filters, search and pagination.
 - [x] Verify updated course coverage and browsing.

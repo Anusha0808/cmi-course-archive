@@ -68,6 +68,24 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          bio: string
+          display_name: string
+          id: string
+        }
+        Insert: {
+          bio?: string
+          display_name?: string
+          id: string
+        }
+        Update: {
+          bio?: string
+          display_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
       resource_reports: {
         Row: {
           created_at: string
@@ -106,6 +124,81 @@ export type Database = {
           },
         ]
       }
+      resource_updates: {
+        Row: {
+          academic_year: string | null
+          author_name: string
+          base_version: number
+          course_id: string
+          created_at: string
+          description: string | null
+          file_path: string | null
+          id: string
+          kind: Database["public"]["Enums"]["resource_kind"]
+          resource_id: string
+          reviewed_at: string | null
+          section: string
+          status: string
+          tags: string[]
+          title: string
+          uploader_id: string
+          url: string | null
+        }
+        Insert: {
+          academic_year?: string | null
+          author_name: string
+          base_version?: number
+          course_id: string
+          created_at?: string
+          description?: string | null
+          file_path?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["resource_kind"]
+          resource_id: string
+          reviewed_at?: string | null
+          section?: string
+          status?: string
+          tags?: string[]
+          title: string
+          uploader_id: string
+          url?: string | null
+        }
+        Update: {
+          academic_year?: string | null
+          author_name?: string
+          base_version?: number
+          course_id?: string
+          created_at?: string
+          description?: string | null
+          file_path?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["resource_kind"]
+          resource_id?: string
+          reviewed_at?: string | null
+          section?: string
+          status?: string
+          tags?: string[]
+          title?: string
+          uploader_id?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_updates_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_updates_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resources: {
         Row: {
           academic_year: string | null
@@ -117,6 +210,7 @@ export type Database = {
           file_path: string | null
           id: string
           kind: Database["public"]["Enums"]["resource_kind"]
+          revision_number: number
           section: string
           status: Database["public"]["Enums"]["resource_status"]
           tags: string[]
@@ -134,6 +228,7 @@ export type Database = {
           file_path?: string | null
           id?: string
           kind: Database["public"]["Enums"]["resource_kind"]
+          revision_number?: number
           section?: string
           status?: Database["public"]["Enums"]["resource_status"]
           tags?: string[]
@@ -151,6 +246,7 @@ export type Database = {
           file_path?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["resource_kind"]
+          revision_number?: number
           section?: string
           status?: Database["public"]["Enums"]["resource_status"]
           tags?: string[]
@@ -206,6 +302,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      review_resource_update: {
+        Args: { _approve: boolean; _id: string }
+        Returns: undefined
       }
     }
     Enums: {

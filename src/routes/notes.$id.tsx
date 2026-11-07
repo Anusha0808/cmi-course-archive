@@ -53,7 +53,7 @@ function NotePage() {
       )}
       <h1 className="mt-3 text-4xl font-bold text-primary">{r.title}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        by <span className="font-medium text-foreground">{r.author_name}</span>
+        by <Link to="/authors/$id" params={{ id: r.uploader_id }} className="font-medium text-primary hover:underline">{r.author_name}</Link>
         {r.academic_year && <> · {r.academic_year}</>}
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-2">{r.tags.map((tag) => <Link key={tag} to="/miscellaneous" search={{ tag }} className="text-sm text-primary underline">#{tag}</Link>)}<ReportResource id={r.id} /></div>

@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { parseTags } from "@/lib/archive-rules";
 import { Textarea } from "@/components/ui/textarea";
 import { COURSE_SUBJECTS } from "@/lib/course-browser";
+import { EditResource } from '@/components/EditResource';
+import { updatesQuery } from '@/lib/resource-updates';
 
 export const Route = createFileRoute("/upload")({
   validateSearch: (s: Record<string, unknown>): { course?: string; section?: string } =>
@@ -35,6 +37,7 @@ function UploadPage() {
   const search = Route.useSearch();
   const qc = useQueryClient();
   const courses = useQuery(courseListQuery);
+  const updates = useQuery(updatesQuery(user?.id));
   const [section, setSection] = useState(search.section === "miscellaneous" ? "miscellaneous" : "course");
   const [kind, setKind] = useState<ResourceKind>("pdf");
   const [courseId, setCourseId] = useState(search.course ?? "");
@@ -202,6 +205,7 @@ function UploadPage() {
                 <span className={r.status === "approved" ? "text-success" : r.status === "rejected" ? "text-destructive" : "text-warning"}>{r.status}</span>
               </div>
               <span className="font-mono text-xs text-muted-foreground">{r.courses?.code}</span>
+              <div className="mt-2"><EditResource resource={r} pending={updates.data?.some(u => u.resource_id === r.id && u.status === 'pending')} /></div>
             </li>
           ))}
           {!mine.data?.length && <li className="text-sm text-muted-foreground">Nothing submitted yet.</li>}

@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import type { Resource } from "@/lib/resources";
 import { ResourceCard } from "@/components/ResourceCard";
 import { Button } from "@/components/ui/button";
+import { UpdateReview } from '@/components/UpdateReview';
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -93,6 +94,7 @@ function AdminPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
       <h1 className="mb-6 text-3xl font-bold text-primary">Review queue</h1>
+      <UpdateReview />
       <section className="mb-10">
         <h2 className="mb-4 border-b border-border pb-2 text-2xl font-bold text-primary">Spam / scam reports</h2>
         {reports.error ? <p className="text-destructive">Could not load reports.</p> : reports.data?.length ? <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{reports.data.map((report) => <div key={report.id} className="space-y-2">

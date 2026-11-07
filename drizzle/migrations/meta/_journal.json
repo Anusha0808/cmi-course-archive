@@ -36,6 +36,13 @@
       "when": 1793896913074,
       "tag": "0004_course_requests",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794059807127,
+      "tag": "0005_author_profiles_and_reviewed_updates",
+      "breakpoints": true
     }
   ]
 }

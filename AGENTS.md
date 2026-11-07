@@ -14,3 +14,6 @@
 - Store tags on resources and reports in their own RLS-protected table so moderator decisions do not alter public visibility automatically.
 - Keep course filtering and pagination in a shared browser-safe module; browse and upload use the same subject ordering so catalogue organisation stays consistent.
 - Preserve timetable course IDs and codes when expanding the catalogue; use archive abbreviations for names-only source entries and exclude generic numbered elective slots to avoid duplicates and orphaned notes.
+- Public author pages use uploader identity and safe profile fields; emails never enter public profile data.
+- Resource changes are immutable owner-submitted snapshots in resource_updates; a moderator-only atomic RPC publishes them with version-conflict checks to preserve the approved version during review.
+- Moderator update alerts use an RLS-scoped Realtime subscription and persisted pending counts, not external email delivery.

@@ -205,7 +205,7 @@ function UploadPage() {
                 <span className={r.status === "approved" ? "text-success" : r.status === "rejected" ? "text-destructive" : "text-warning"}>{r.status}</span>
               </div>
               <span className="font-mono text-xs text-muted-foreground">{r.courses?.code}</span>
-              <div className="mt-2"><EditResource resource={r} pending={updates.data?.some(u => u.resource_id === r.id && u.status === 'pending')} /></div>
+              <div className="mt-2"><EditResource resource={r} pending={updates.data?.some(u => u.resource_id === r.id && u.status === 'pending') ?? false} /></div>
             </li>
           ))}
           {!mine.data?.length && <li className="text-sm text-muted-foreground">Nothing submitted yet.</li>}

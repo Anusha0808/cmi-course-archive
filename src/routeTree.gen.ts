@@ -14,8 +14,10 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MiscellaneousRouteImport } from './routes/miscellaneous'
+import { Route as OtherWebsitesRouteImport } from './routes/other-websites'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as UploadRouteImport } from './routes/upload'
+import { Route as AuthorsIndexRouteImport } from './routes/authors.index'
 import { Route as AuthorsIdRouteImport } from './routes/authors.$id'
 import { Route as CoursesCodeRouteImport } from './routes/courses.$code'
 import { Route as NotesIdRouteImport } from './routes/notes.$id'
@@ -45,6 +47,11 @@ const MiscellaneousRoute = MiscellaneousRouteImport.update({
   path: '/miscellaneous',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OtherWebsitesRoute = OtherWebsitesRouteImport.update({
+  id: '/other-websites',
+  path: '/other-websites',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -53,6 +60,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthorsIndexRoute = AuthorsIndexRouteImport.update({
+  id: '/authors/',
+  path: '/authors/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthorsIdRoute = AuthorsIdRouteImport.update({
@@ -77,11 +89,13 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/miscellaneous': typeof MiscellaneousRoute
+  '/other-websites': typeof OtherWebsitesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/upload': typeof UploadRoute
   '/authors/$id': typeof AuthorsIdRoute
   '/courses/$code': typeof CoursesCodeRoute
   '/notes/$id': typeof NotesIdRoute
+  '/authors/': typeof AuthorsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -89,11 +103,13 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/miscellaneous': typeof MiscellaneousRoute
+  '/other-websites': typeof OtherWebsitesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/upload': typeof UploadRoute
   '/authors/$id': typeof AuthorsIdRoute
   '/courses/$code': typeof CoursesCodeRoute
   '/notes/$id': typeof NotesIdRoute
+  '/authors': typeof AuthorsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -102,11 +118,13 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/miscellaneous': typeof MiscellaneousRoute
+  '/other-websites': typeof OtherWebsitesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/upload': typeof UploadRoute
   '/authors/$id': typeof AuthorsIdRoute
   '/courses/$code': typeof CoursesCodeRoute
   '/notes/$id': typeof NotesIdRoute
+  '/authors/': typeof AuthorsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -116,11 +134,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/miscellaneous'
+    | '/other-websites'
     | '/reset-password'
     | '/upload'
     | '/authors/$id'
     | '/courses/$code'
     | '/notes/$id'
+    | '/authors/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -128,11 +148,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/miscellaneous'
+    | '/other-websites'
     | '/reset-password'
     | '/upload'
     | '/authors/$id'
     | '/courses/$code'
     | '/notes/$id'
+    | '/authors'
   id:
     | '__root__'
     | '/'
@@ -140,11 +162,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/miscellaneous'
+    | '/other-websites'
     | '/reset-password'
     | '/upload'
     | '/authors/$id'
     | '/courses/$code'
     | '/notes/$id'
+    | '/authors/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -153,11 +177,13 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   MiscellaneousRoute: typeof MiscellaneousRoute
+  OtherWebsitesRoute: typeof OtherWebsitesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   UploadRoute: typeof UploadRoute
   AuthorsIdRoute: typeof AuthorsIdRoute
   CoursesCodeRoute: typeof CoursesCodeRoute
   NotesIdRoute: typeof NotesIdRoute
+  AuthorsIndexRoute: typeof AuthorsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -197,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MiscellaneousRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/other-websites': {
+      id: '/other-websites'
+      path: '/other-websites'
+      fullPath: '/other-websites'
+      preLoaderRoute: typeof OtherWebsitesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -209,6 +242,13 @@ declare module '@tanstack/react-router' {
       path: '/upload'
       fullPath: '/upload'
       preLoaderRoute: typeof UploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/authors/': {
+      id: '/authors/'
+      path: '/authors'
+      fullPath: '/authors/'
+      preLoaderRoute: typeof AuthorsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/authors/$id': {
@@ -241,11 +281,13 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   MiscellaneousRoute: MiscellaneousRoute,
+  OtherWebsitesRoute: OtherWebsitesRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   UploadRoute: UploadRoute,
   AuthorsIdRoute: AuthorsIdRoute,
   CoursesCodeRoute: CoursesCodeRoute,
   NotesIdRoute: NotesIdRoute,
+  AuthorsIndexRoute: AuthorsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

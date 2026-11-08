@@ -1,4 +1,8 @@
 # Archive updates
+- [x] Add an Authors directory linking to existing author profiles.
+- [x] Add Other websites with member submissions and previous/next/random webring navigation.
+- [x] Test website URL and ring navigation rules; verify public directories and mobile layouts.
+- [ ] Verify signed-in website submission and edit flow (blocked: requesting user has no matching account session; sign-in in preview required).
 - [ ] Add public author profiles with editable names and short bios.
 - [ ] Add owner editing with moderator review and in-app update notifications, preserving approved versions.
 - [ ] Test profile and update permissions and verify the complete review flow.

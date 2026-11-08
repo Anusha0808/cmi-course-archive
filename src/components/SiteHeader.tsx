@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import logo from "@/assets/cmi-logo.png.asset.json";
+import { Button } from '@/components/ui/button';
 
 export function SiteHeader() {
   const { user, isAdmin } = useAuth();
@@ -17,11 +18,13 @@ export function SiteHeader() {
         <nav className="flex flex-wrap items-center gap-4">
           <Link to="/" className={linkCls}>Courses</Link>
           <Link to="/miscellaneous" className={linkCls}>Miscellaneous</Link>
+          <Link to="/authors" className={linkCls}>Authors</Link>
+          <Link to="/other-websites" className={linkCls}>Other websites</Link>
           <Link to="/upload" className={linkCls}>Upload</Link>
           <Link to="/about" className={linkCls}>About</Link>
           {isAdmin && <Link to="/admin" className={linkCls}>Review</Link>}
           {user ? (
-            <button
+            <Button variant="link"
               className={linkCls}
               onClick={async () => {
                 await supabase.auth.signOut();
@@ -29,7 +32,7 @@ export function SiteHeader() {
               }}
             >
               Sign out
-            </button>
+            </Button>
           ) : (
             <Link to="/auth" className={linkCls}>Sign in</Link>
           )}

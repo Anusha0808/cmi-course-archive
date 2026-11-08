@@ -43,6 +43,13 @@
       "when": 1794059807127,
       "tag": "0005_author_profiles_and_reviewed_updates",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794157308488,
+      "tag": "0006_member_websites_webring",
+      "breakpoints": true
     }
   ]
 }

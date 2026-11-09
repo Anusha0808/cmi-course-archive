@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import logo from "@/assets/cmi-logo.png.asset.json";
+import darkLogo from "@/assets/cmi-logo-dark-source.png.asset.json";
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -13,7 +14,8 @@ export function SiteHeader() {
     <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-20">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
         <Link to="/" className="flex items-center gap-4">
-          <img src={logo.url} alt="Chennai Mathematical Institute" className="h-10 w-auto rounded-sm dark:bg-logo-surface dark:p-1" />
+          <img src={logo.url} alt="Chennai Mathematical Institute" className="h-10 w-auto dark:hidden" />
+          <img src={darkLogo.url} alt="Chennai Mathematical Institute" className="hidden h-10 w-auto brightness-0 invert dark:block" />
           <span className="hidden md:block border-l border-primary/40 pl-4 font-serif text-2xl font-bold text-primary">Notes Archive</span>
         </Link>
         <nav className="flex flex-wrap items-center gap-4">

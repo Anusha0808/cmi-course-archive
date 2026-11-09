@@ -1,4 +1,7 @@
 # Archive updates
+- [x] Add persistent dark mode and an appearance switch.
+- [x] Allow multiple websites per member, with individual editing and removal.
+- [x] Verify dark mode on desktop/mobile and test multiple website creation and targeted editing; signed-in live submissions remain blocked below.
 - [x] Add an Authors directory linking to existing author profiles.
 - [x] Add Other websites with member submissions and previous/next/random webring navigation.
 - [x] Test website URL and ring navigation rules; verify public directories and mobile layouts.

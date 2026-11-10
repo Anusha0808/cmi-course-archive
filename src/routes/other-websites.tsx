@@ -16,9 +16,9 @@ const websitesQuery = { queryKey: ['member-websites'], queryFn: () => getWebsite
 export const Route = createFileRoute('/other-websites')({
   loader: ({ context }) => context.queryClient.ensureQueryData(websitesQuery),
   head: () => ({ meta: [
-    { title: 'Other websites — CMI Webring' },
+    { title: 'Fellow websites — CMI Webring' },
     { name: 'description', content: 'Explore personal websites, blogs and projects by CMI members in the CMI webring.' },
-    { property: 'og:title', content: 'Other websites — CMI Webring' },
+    { property: 'og:title', content: 'Fellow websites — CMI Webring' },
     { property: 'og:description', content: 'Personal websites connected by the CMI community.' },
     { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' },
   ] }),
@@ -65,7 +65,7 @@ export function WebsitesPage() {
     toast.success('Website removed');
   }
   return <main className="mx-auto max-w-6xl px-5 py-12">
-    <header className="mb-8 border-b border-border pb-6"><p className="mb-2 font-mono text-xs uppercase text-muted-foreground">CMI Webring</p><h1 className="text-4xl font-bold text-primary">Other websites</h1><p className="mt-3 text-muted-foreground">Personal corners of the web, connected by CMI.</p></header>
+    <header className="mb-8 border-b border-border pb-6"><p className="mb-2 font-mono text-xs uppercase text-muted-foreground">CMI Webring</p><h1 className="text-4xl font-bold text-primary">Fellow websites</h1><p className="mt-3 text-muted-foreground">Personal corners of the web, connected by CMI.</p></header>
     {user ? <section className="mb-8 border-b border-border pb-6"><Button variant="outline" onClick={() => { setEditing(undefined); setFormOpen(true); }}><Plus />Add a website</Button>{formOpen && <form key={own?.id ?? 'new'} onSubmit={save} className="mt-5 max-w-xl space-y-4">
       <h2 className="text-xl font-bold">{own ? 'Edit your website' : 'Add a website'}</h2>
       <div><Label htmlFor="website-title">Website name</Label><Input id="website-title" name="title" defaultValue={own?.title} maxLength={100} required /></div>

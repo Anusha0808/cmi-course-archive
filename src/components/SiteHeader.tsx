@@ -22,7 +22,7 @@ export function SiteHeader() {
           <Link to="/" className={linkCls}>Courses</Link>
           <Link to="/miscellaneous" className={linkCls}>Miscellaneous</Link>
           <Link to="/authors" className={linkCls}>Authors</Link>
-          <Link to="/other-websites" className={linkCls}>Other websites</Link>
+          <Link to="/other-websites" className={linkCls}>Fellow websites</Link>
           <Link to="/upload" className={linkCls}>Upload</Link>
           <Link to="/about" className={linkCls}>About</Link>
           {isAdmin && <Link to="/admin" className={linkCls}>Review</Link>}

@@ -25,7 +25,7 @@ function AuthorsPage() {
   const { data } = useSuspenseQuery(authorsQuery);
   const [search, setSearch] = useState('');
   const { user } = useAuth();
-  const authors = data.filter(a => `${a.display_name} ${a.bio}`.toLowerCase().includes(search.toLowerCase()));
+  const authors = data.filter(a => a.noteCount > 0 && `${a.display_name} ${a.bio}`.toLowerCase().includes(search.toLowerCase()));
   return <main className="mx-auto max-w-6xl px-5 py-12">
     <header className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
       <div><h1 className="text-4xl font-bold text-primary">Authors</h1><p className="mt-3 text-muted-foreground">The people behind the notes.</p></div>

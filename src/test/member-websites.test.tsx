@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { WebsitesPage } from '@/routes/other-websites';
+import { WebsitesPage } from '@/routes/fellow-websites';
 
 const state = vi.hoisted(() => ({
   rows: [{ id: 'first', owner_id: 'member', title: 'First site', url: 'https://first.example/', description: '', profiles: { display_name: 'Member' } }],

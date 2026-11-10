@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as FellowWebsitesRouteImport } from './routes/fellow-websites'
 import { Route as MiscellaneousRouteImport } from './routes/miscellaneous'
 import { Route as OtherWebsitesRouteImport } from './routes/other-websites'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -40,6 +41,11 @@ const AdminRoute = AdminRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FellowWebsitesRoute = FellowWebsitesRouteImport.update({
+  id: '/fellow-websites',
+  path: '/fellow-websites',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MiscellaneousRoute = MiscellaneousRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/fellow-websites': typeof FellowWebsitesRoute
   '/miscellaneous': typeof MiscellaneousRoute
   '/other-websites': typeof OtherWebsitesRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/fellow-websites': typeof FellowWebsitesRoute
   '/miscellaneous': typeof MiscellaneousRoute
   '/other-websites': typeof OtherWebsitesRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/fellow-websites': typeof FellowWebsitesRoute
   '/miscellaneous': typeof MiscellaneousRoute
   '/other-websites': typeof OtherWebsitesRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/auth'
+    | '/fellow-websites'
     | '/miscellaneous'
     | '/other-websites'
     | '/reset-password'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/auth'
+    | '/fellow-websites'
     | '/miscellaneous'
     | '/other-websites'
     | '/reset-password'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/auth'
+    | '/fellow-websites'
     | '/miscellaneous'
     | '/other-websites'
     | '/reset-password'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
+  FellowWebsitesRoute: typeof FellowWebsitesRoute
   MiscellaneousRoute: typeof MiscellaneousRoute
   OtherWebsitesRoute: typeof OtherWebsitesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fellow-websites': {
+      id: '/fellow-websites'
+      path: '/fellow-websites'
+      fullPath: '/fellow-websites'
+      preLoaderRoute: typeof FellowWebsitesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/miscellaneous': {
@@ -280,6 +300,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
+  FellowWebsitesRoute: FellowWebsitesRoute,
   MiscellaneousRoute: MiscellaneousRoute,
   OtherWebsitesRoute: OtherWebsitesRoute,
   ResetPasswordRoute: ResetPasswordRoute,

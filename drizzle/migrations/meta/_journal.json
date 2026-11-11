@@ -64,6 +64,13 @@
       "when": 1794412230990,
       "tag": "0008_moderator_member_directory",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794412405777,
+      "tag": "0009_split_notes_storage_read_policies",
+      "breakpoints": true
     }
   ]
 }

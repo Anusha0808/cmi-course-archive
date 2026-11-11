@@ -57,6 +57,13 @@
       "when": 1794187903343,
       "tag": "0007_multiple_member_websites",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794412230990,
+      "tag": "0008_moderator_member_directory",
+      "breakpoints": true
     }
   ]
 }

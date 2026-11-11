@@ -1,0 +1,4 @@
+CREATE FUNCTION public.moderator_member_directory() RETURNS TABLE(id uuid, display_name text, bio text, email text, joined_at timestamptz, upload_count bigint, is_moderator boolean) LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$ SELECT p.id, p.display_name, p.bio, u.email, u.created_at, (SELECT count(*) FROM public.resources r WHERE r.uploader_id = p.id), public.has_role(p.id, 'admin') FROM public.profiles p JOIN auth.users u ON u.id = p.id WHERE public.has_role(auth.uid(), 'admin') ORDER BY u.created_at $$;
+REVOKE ALL ON FUNCTION public.moderator_member_directory() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.moderator_member_directory() TO authenticated;
+COMMENT ON FUNCTION public.moderator_member_directory() IS 'Moderator-only account directory; returns no rows unless the caller is an admin.';

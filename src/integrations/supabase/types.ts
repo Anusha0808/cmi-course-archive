@@ -338,6 +338,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      moderator_member_directory: {
+        Args: never
+        Returns: {
+          bio: string
+          display_name: string
+          email: string
+          id: string
+          is_moderator: boolean
+          joined_at: string
+          upload_count: number
+        }[]
+      }
       review_resource_update: {
         Args: { _approve: boolean; _id: string }
         Returns: undefined

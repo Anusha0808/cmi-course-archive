@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-function AdminPage() {
+export function AdminPage() {
   const { isAdmin, loading } = useAuth();
   const qc = useQueryClient();
   const pending = useQuery({
@@ -64,6 +64,15 @@ function AdminPage() {
     queryKey: ["course-requests"], enabled: isAdmin,
     queryFn: async () => {
       const { data, error } = await supabase.from("course_requests").select("*").eq("status", "pending").order("created_at");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const members = useQuery({
+    queryKey: ["members"], enabled: isAdmin,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("moderator_member_directory");
       if (error) throw error;
       return data;
     },
@@ -112,6 +121,29 @@ function AdminPage() {
           <div><span className="font-mono font-semibold text-primary">{q.code}</span> — {q.name} <span className="text-sm text-muted-foreground">({q.subject})</span></div>
           <div className="flex gap-2"><Button size="sm" onClick={() => decideRequest(q.id, true)}>Add course</Button><Button size="sm" variant="outline" onClick={() => decideRequest(q.id, false)}>Reject</Button></div>
         </li>)}</ul> : <p className="text-muted-foreground">No course requests.</p>}
+      </section>
+      <section className="mb-10">
+        <h2 className="mb-4 border-b border-border pb-2 text-2xl font-bold text-primary">Members</h2>
+        {members.error ? <p className="text-destructive">Could not load members.</p> : members.data?.length ? (
+          <ul className="divide-y divide-border rounded-md border border-border bg-card">
+            {members.data.map((m) => (
+              <li key={m.id} className="flex flex-wrap items-start justify-between gap-3 p-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Link to="/authors/$id" params={{ id: m.id }} className="font-semibold text-primary hover:underline">{m.display_name}</Link>
+                    {m.is_moderator && <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">Moderator</span>}
+                  </div>
+                  <p className="break-words text-sm text-muted-foreground">{m.email}</p>
+                  {m.bio && <p className="line-clamp-2 break-words text-sm text-muted-foreground">{m.bio}</p>}
+                </div>
+                <div className="shrink-0 text-sm text-muted-foreground">
+                  <span>{m.upload_count} {m.upload_count === 1 ? "upload" : "uploads"}</span>
+                  <span> · joined <span className="whitespace-nowrap">{new Date(m.joined_at).toLocaleDateString()}</span></span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : <p className="text-muted-foreground">No accounts yet.</p>}
       </section>
       <h2 className="mb-4 text-2xl font-bold text-primary">Pending submissions</h2>
       {pending.data?.length ? (

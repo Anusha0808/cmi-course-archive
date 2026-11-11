@@ -15,6 +15,7 @@
 - Keep course filtering and pagination in a shared browser-safe module; browse and upload use the same subject ordering so catalogue organisation stays consistent.
 - Preserve timetable course IDs and codes when expanding the catalogue; use archive abbreviations for names-only source entries and exclude generic numbered elective slots to avoid duplicates and orphaned notes.
 - Public author pages use uploader identity and safe profile fields; emails never enter public profile data.
+- The moderator account directory reads emails and join dates from auth through a security-definer function gated on the admin role, so account identity stays out of public tables and out of anon grants.
 - Directory reads use public server functions projecting safe profile fields; website memberships are owner-scoped, database-verified submissions with stable creation-order webring navigation.
 - Members may own multiple website listings; insert new listings and edit by listing ID plus owner ID, never upsert by owner.
 - Appearance uses global semantic dark tokens and a stored browser preference initialized after hydration, keeping all pages on one theme.
